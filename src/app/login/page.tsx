@@ -1,18 +1,9 @@
 import Link from "next/link";
 import { SubmitButton } from "@/components/ui/custom/submit-button";
 import { Input } from "@/components/ui/custom/input";
+import { signIn, signUp } from "@/app/login/actions.ts";
 
 export default function Login() {
-    const signIn = async (formData: FormData) => {
-        "use server";
-        console.log('signUp called', formData);
-    };
-
-    const signUp = async (formData: FormData) => {
-        "use server";
-        console.log('signUp called', formData);
-    };
-
     return (
       <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
           <Link
