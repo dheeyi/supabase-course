@@ -1,25 +1,43 @@
-import * as React from "react"
+"use client";
 
-import { cn } from "@/lib/utils"
+import { useFormStatus } from "react-dom";
+import { type ComponentProps, useActionState } from "react";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "../alert";
+import { AlertTriangle } from "lucide-react";
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {}
+type Props = Omit<ComponentProps<typeof Button>, 'formAction'> & {
+  pendingText?: string;
+  formAction: (prevState: any, formData: FormData) => Promise<any>;
+  errorMessage?: string;
+};
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, ...props }, ref) => {
-    return (
-      <input
-        type={type}
-        className={cn(
-          "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-          className
-        )}
-        ref={ref}
-        {...props}
-      />
-    )
-  }
-)
-Input.displayName = "Input"
+const initialState = {
+  message: "",
+};
 
-export { Input }
+export function SubmitButton({ children, formAction, errorMessage, pendingText = "Submitting...", ...props }: Props) {
+  const { pending, action } = useFormStatus();
+  const [state, internalFormAction] = useActionState(formAction, initialState);
+
+
+  const isPending = pending && action === internalFormAction;
+
+  return (
+    <div className="flex flex-col gap-y-4 w-full">
+      {Boolean(errorMessage || state?.message) && (
+        <Alert variant="destructive" className="w-full">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            {errorMessage || state?.message}
+          </AlertDescription>
+        </Alert>
+      )}
+      <div>
+        <Button {...props} type="submit" aria-disabled={pending} formAction={internalFormAction}>
+          {isPending ? pendingText : children}
+        </Button>
+      </div>
+    </div>
+  );
+}
