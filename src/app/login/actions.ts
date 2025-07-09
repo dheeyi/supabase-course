@@ -40,3 +40,25 @@ export async function signUp(_prevState: never, formData: FormData) {
   revalidatePath('/', 'layout')
   redirect('/account')
 }
+
+export async function signInWithGitHub() {
+  const supabase = await createClient()
+
+  const redirectUrl = `${process.env.NEXT_PUBLIC_URL}/auth/callback`
+
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'github',
+    options: {
+      redirectTo: redirectUrl,
+    },
+  })
+
+  console.log(data)
+
+  if (error) {
+    console.log(error)
+  }
+
+  redirect(data.url)
+}

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { SubmitButton } from "@/components/ui/custom/submit-button";
 import { Input } from "@/components/ui/custom/input";
-import { signIn, signUp } from "@/app/login/actions.ts";
+import { signIn, signUp, signInWithGitHub } from "@/app/login/actions.ts";
 
 export default function Login() {
     return (
@@ -58,6 +58,13 @@ export default function Login() {
               >
                   Sign Up
               </SubmitButton>
+              <button
+                type="button"
+                onClick={signInWithGitHub}
+                className="mt-4 bg-black text-white py-2 px-4 rounded"
+              >
+                  Sign in with GitHub
+              </button>
           </form>
       </div>
     );
