@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils"
-import { Instagram, Dribbble, PartyPopper } from "lucide-react"
+import { Instagram, Dribbble, PartyPopper, LogOut } from "lucide-react"
+import { signOut } from "@/app/login/actions"
 
 const navItems = [
   "HOME",
@@ -31,6 +32,13 @@ export default function Sidebar() {
             {item}
           </a>
         ))}
+        <button
+          onClick={signOut}
+          className="text-white font-light tracking-wide text-sm relative flex items-center gap-2"
+        >
+          <LogOut size={18} />
+          LOGOUT
+        </button>
       </nav>
 
       <div className="flex flex-col items-start gap-4">
