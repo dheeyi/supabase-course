@@ -63,7 +63,6 @@ export async function signInWithGitHub() {
   redirect(data.url)
 }
 
-
 export async function signOut() {
   const supabase = await createClient()
 
@@ -76,4 +75,51 @@ export async function signOut() {
 
   revalidatePath('/', 'layout')
   redirect('/')
+}
+
+export async function createProfile() {
+  const supabase = await createClient()
+
+  const { data: { user }, error } = await supabase.auth.getUser()
+
+  if (!user || error) {
+    console.log('No user or error getting user:', error)
+    return
+  }
+
+  // select de la tabla accounts
+  const { data: existing, error: existingError } = await supabase
+    .schema('devlinks')
+    .from('accounts')
+    .select('id')
+    .eq('auth_user_id', user.id)
+    .single()
+
+  if (existingError && existingError.code !== 'PGRST116') {
+    console.error('Error checking existing account:', existingError)
+    return
+  }
+
+  console.log('existing account:', existing);
+
+  if (!existing) {
+    // insert en la tabla accounts
+    const { data: dataAccount, error: accountError } = await supabase
+      .schema('devlinks')
+      .from('accounts')
+      .insert([{
+        auth_user_id: user.id,
+        user_name: user.email.split('@')[0],
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        created_by: user.id,
+        updated_by: user.id,
+      }])
+
+    if (accountError) {
+      console.error('Error inserting account:', accountError)
+    } else {
+      console.log('Inserted account:', dataAccount)
+    }
+  }
 }

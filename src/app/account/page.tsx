@@ -1,6 +1,19 @@
+"use client";
+
+import { useEffect } from "react";
 import Sidebar from "@/components/ui/custom/sidebar.tsx";
 
 export default function Account() {
+  useEffect(() => {
+    fetch('/api/user/create-profile')
+      .then(res => res.json())
+      .then(data => {
+        if (!data.success) {
+          console.error('error al crear el perfil del usuario');
+        }
+      })
+      .catch(console.error);
+  }, []);
   return (
     <div className="flex">
       <Sidebar />
