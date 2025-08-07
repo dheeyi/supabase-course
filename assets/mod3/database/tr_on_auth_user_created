@@ -1,0 +1,4 @@
+CREATE TRIGGER tr_on_auth_user_created
+AFTER INSERT ON auth.users
+FOR EACH ROW
+EXECUTE PROCEDURE devlinks.fn_create_new_user_profile();

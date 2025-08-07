@@ -1,0 +1,21 @@
+CREATE OR REPLACE FUNCTION devlinks.fn_create_new_user_profile()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+    generated_user_name text := 'your username';
+    default_full_name text := 'your full name';
+BEGIN
+    IF NEW.email IS NOT NULL AND NEW.email != '' THEN
+        generated_user_name := split_part(NEW.email, '@', 1);
+    END IF;
+
+    INSERT INTO devlinks.accounts (auth_user_id, user_name, full_name, created_at, updated_at, created_by, updated_by) 
+    VALUES (NEW.id, generated_user_name, default_full_name, NOW(), NOW(), NEW.id, NEW.id);
+
+    RETURN NEW;
+END;
+$$;
+

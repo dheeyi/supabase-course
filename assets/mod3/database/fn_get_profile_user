@@ -1,0 +1,17 @@
+CREATE OR REPLACE FUNCTION devlinks.fn_get_profile_user()
+RETURNS json
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT json_build_object(
+    'account_id', a.id,
+    'auth_user_id', a.auth_user_id,
+    'user_name', a.user_name,
+    'full_name', a.full_name,
+    'created_at', a.created_at,
+    'updated_at', a.updated_at
+  )
+  FROM devlinks.accounts a
+  WHERE a.auth_user_id = auth.uid();
+$$;
