@@ -11,11 +11,20 @@ const navItems = [
   "CONTACT",
 ]
 
-export default function Sidebar() {
+interface UserData {
+  user_name: string;
+  full_name: string;
+}
+
+interface SidebarProps {
+  userData: UserData | null;
+}
+
+export default function Sidebar({ userData }: SidebarProps) {
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-[#111] text-white flex flex-col justify-between py-8 px-6">
       <div className="flex items-center gap-2">
-        <h1 className="text-3xl font-bold">Jac.</h1>
+        <h1 className="text-3xl font-bold">{userData?.user_name || 'Usuario'}</h1>
       </div>
 
       <nav className="flex flex-col gap-5 mt-10">

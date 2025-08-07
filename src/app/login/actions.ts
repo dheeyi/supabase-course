@@ -123,3 +123,19 @@ export async function createProfile() {
     }
   }
 }
+
+export async function getCurrentUserAccount() {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .schema('devlinks')
+    .rpc('fn_get_profile_user')
+
+  if (error) {
+    console.error('Error fetching user account:', error)
+    return null
+  }
+
+  return data
+}
+
