@@ -18,5 +18,20 @@ CREATE TABLE IF NOT EXISTS devlinks.accounts
 ALTER TABLE devlinks.accounts ADD CONSTRAINT unique_auth_user_id UNIQUE (auth_user_id);
 
 
-///////////
+///////////RLS
+
+ALTER TABLE devlinks.accounts ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow insert for authenticated users"
+ON devlinks.accounts
+AS PERMISSIVE
+FOR INSERT
+TO authenticated
+WITH CHECK (auth.uid() = auth_user_id);
+
+GRANT SELECT, INSERT ON devlinks.accounts TO authenticated;
+
+
+//// functions
+
 
