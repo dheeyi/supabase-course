@@ -9,13 +9,20 @@ Deno.serve(async (req) => {
     })
   }
 
+  const token = authHeader.split(' ')[1]
+  if (!token) {
+    return new Response(JSON.stringify({ error: 'Token inválido' }), {
+      status: 401
+    })
+  }
+
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
     Deno.env.get('SUPABASE_ANON_KEY')!,
     { global: { headers: { Authorization: authHeader } } }
   )
 
-  const { data: { user }, error: authError } = await supabase.auth.getUser(authHeader)
+  const { data: { user }, error: authError } = await supabase.auth.getUser(token)
   if (authError || !user) {
     return new Response(JSON.stringify({ error: 'Token invalid or expired' }), {
       status: 401
@@ -47,7 +54,10 @@ Deno.serve(async (req) => {
     .schema('devlinks')
     .rpc('fn_get_profile_user')
 
-  return new Response(data, {
-    headers: { 'Content-Type': 'application/json' }
+  return new Response(JSON.stringify(data), {
+    headers: {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache'
+    }
   })
 })
