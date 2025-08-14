@@ -1,7 +1,7 @@
 "use client"
 import { cn } from "@/lib/utils"
 import { Instagram, Dribbble, PartyPopper, LogOut, Save } from "lucide-react"
-import { signOut } from "@/app/login/actions"
+import {signOut, updateProfile} from "@/app/login/actions"
 import { useState } from 'react';
 import { Input } from "./input"
 
@@ -27,6 +27,11 @@ export default function Sidebar({ userData }: SidebarProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [tempUsername, setTempUsername] = useState(userData?.user_name || '');
 
+  const handleSave = async () => {
+    await updateProfile({ user_name: tempUsername })
+    setIsEditing(false);
+  }
+
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-[#111] text-white flex flex-col justify-between py-8 px-6">
       <div className="flex items-center gap-2 max-w-[90%] overflow-hidden">
@@ -41,7 +46,7 @@ export default function Sidebar({ userData }: SidebarProps) {
             <button
               type="button"
               className="rounded-full p-1 hover:bg-gray-200"
-              onClick={() => setIsEditing(false)}
+              onClick={handleSave}
             >
               <Save className="h-4 w-4" />
             </button>
