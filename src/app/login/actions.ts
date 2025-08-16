@@ -127,6 +127,9 @@ export async function createProfile() {
 export async function getCurrentUserAccount() {
   const supabase = await createClient()
 
+  const { data: { session } } = await supabase.auth.getSession()
+  console.log('session:', session);
+
   const { data, error } = await supabase
     .schema('devlinks')
     .rpc('fn_get_profile_user')
@@ -139,3 +142,16 @@ export async function getCurrentUserAccount() {
   return data
 }
 
+export async function updateProfile(profileData: { user_name: string }) {
+    const supabase = await createClient()
+
+    const { error } = await supabase.functions.invoke('update-profile', {
+      body: profileData
+    })
+
+    if (error) {
+      console.error('Error updating profile:', error)
+    }
+
+    revalidatePath('/', 'layout')
+}

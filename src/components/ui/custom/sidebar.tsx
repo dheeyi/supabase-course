@@ -1,6 +1,9 @@
+"use client"
 import { cn } from "@/lib/utils"
-import { Instagram, Dribbble, PartyPopper, LogOut } from "lucide-react"
-import { signOut } from "@/app/login/actions"
+import { Instagram, Dribbble, PartyPopper, LogOut, Save } from "lucide-react"
+import {signOut, updateProfile} from "@/app/login/actions"
+import { useState } from 'react';
+import { Input } from "./input"
 
 const navItems = [
   "HOME",
@@ -21,10 +24,41 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ userData }: SidebarProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [tempUsername, setTempUsername] = useState(userData?.user_name || '');
+
+  const handleSave = async () => {
+    await updateProfile({ user_name: tempUsername })
+    setIsEditing(false);
+  }
+
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-[#111] text-white flex flex-col justify-between py-8 px-6">
-      <div className="flex items-center gap-2">
-        <h1 className="text-3xl font-bold">{userData?.user_name || 'Usuario'}</h1>
+      <div className="flex items-center gap-2 max-w-[90%] overflow-hidden">
+        {isEditing ? (
+          <>
+            <Input
+              type="text"
+              value={tempUsername}
+              onChange={(e) => setTempUsername(e.target.value)}
+              className="text-3xl font-bold bg-transparent border-b border-white/30 focus:outline-none flex-1 min-w-0"
+            />
+            <button
+              type="button"
+              className="rounded-full p-1 hover:bg-gray-200"
+              onClick={handleSave}
+            >
+              <Save className="h-4 w-4" />
+            </button>
+          </>
+        ) : (
+          <h1
+            className="text-3xl font-bold cursor-pointer truncate"
+            onClick={() => setIsEditing(true)}
+          >
+            {userData?.user_name || 'Usuario'}
+          </h1>
+        )}
       </div>
 
       <nav className="flex flex-col gap-5 mt-10">
